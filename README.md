@@ -10,7 +10,7 @@ change-detection → webhook alert)**.
 
 ## Part A — `powerbi/`: eight-page executive dashboard
 
-A star-schema model (10 tables, DAX `DateDim`) rebuilt from my production exec dashboard's
+A star-schema model (12 tables, DAX `DateDim`) rebuilt from my production exec dashboard's
 top-down design: **Overview** (North-Star KPI row) · **Media Spend** (per-campaign **ROAS vs a
 margin-derived breakeven**, cut/scale conditional formatting — the centerpiece) · **Customers**
 (repeat rate, LTV, win-back list) · **Inventory** (stockouts, days of cover, reorder list) ·
@@ -24,7 +24,35 @@ payments gross + wholesale invoices = total revenue to the dollar, funnel orders
 daily order counts, creator GMV is a strict subset of TikTok Shop revenue, and search-term
 spend sums exactly to campaign spend.
 
-<!-- screenshots: report page · Model view (star schema) · a DAX measure -->
+### Screenshots
+
+**Overview — North-Star KPIs**
+
+![Overview](powerbi/screenshots/01-overview.png)
+
+**Media Spend (the centerpiece) — per-campaign ROAS vs a margin-derived breakeven; red = underwater, the cut list**
+
+![Media Spend](powerbi/screenshots/02-media-spend.png)
+
+**Model view — the 12-table star schema**
+
+![Star schema](powerbi/screenshots/09-model-star-schema.png)
+
+**A DAX measure — repeat rate (`VAR` / `FILTER` / `CALCULATE`)**
+
+![DAX measure](powerbi/screenshots/10-dax-measure.png)
+
+<details>
+<summary><b>The other five action-list pages</b> — Customers · Inventory · Creators · Search Terms · Conversion · Cash</summary>
+
+![Customers](powerbi/screenshots/03-customers.png)
+![Inventory](powerbi/screenshots/04-inventory.png)
+![Creators](powerbi/screenshots/05-creators.png)
+![Search Terms](powerbi/screenshots/06-search-terms.png)
+![Conversion](powerbi/screenshots/07-conversion.png)
+![Cash](powerbi/screenshots/08-cash.png)
+
+</details>
 
 **Cross-check:** Total Revenue ≈ $495K, Shopify top channel (~$105K), TikTok Shop best AOV
 ($172) — identical to the dbt marts and the NL→SQL agent's answers, because it's the same model.
