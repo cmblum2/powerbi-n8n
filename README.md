@@ -85,7 +85,15 @@ plus a dash of MLOps: a workflow tool watching a deployed model's health endpoin
 posts the whole queue + verdict baseline (empty memory); the second posts only the digest —
 the diff state persists between runs.
 
-<!-- screenshots: canvas · Discord alerts (queue entrants + health digest) -->
+### Screenshots
+
+**The workflow — one daily trigger, four change-detection branches (🎯 queue watch · 📊 health digest · ⚡ campaign flips · 🔥 spark windows)**
+
+![n8n workflow canvas](n8n/screenshots/01-workflow-canvas.png)
+
+**A run — every node green, data flowing through all four branches. Run 1 (3.8s) posted the alert flood from an empty memory; run 2 (605ms) posted the digest only — the persisted state is the proof.**
+
+![n8n executions succeeded](n8n/screenshots/02-executions-green.png)
 
 Also included: `new-product-alert.workflow.json`, a generic competitor new-product monitor
 (same pattern over any public Shopify `products.json` feed).
