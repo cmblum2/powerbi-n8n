@@ -1,0 +1,36 @@
+{
+  "id": "opsAlertsErr00001",
+  "name": "Ops alerts — error handler",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "err-trigger",
+      "name": "On workflow error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DISCORD_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ content: '🚨 Ops-alerts run FAILED — \"' + ($json.workflow && $json.workflow.name ? $json.workflow.name : 'unknown workflow') + '\" stopped at node \"' + ($json.execution && $json.execution.lastNodeExecuted ? $json.execution.lastNodeExecuted : '?') + '\": ' + ($json.execution && $json.execution.error && $json.execution.error.message ? $json.execution.error.message : 'unknown error') + '. No digest today means this pipeline is down — check n8n.' }) }}",
+        "options": {}
+      },
+      "id": "err-post",
+      "name": "Alert: pipeline down",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [260, 0]
+    }
+  ],
+  "connections": {
+    "On workflow error": {
+      "main": [[{ "node": "Alert: pipeline down", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

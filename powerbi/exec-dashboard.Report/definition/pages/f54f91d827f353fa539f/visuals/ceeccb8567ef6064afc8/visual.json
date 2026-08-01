@@ -1,0 +1,174 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "name": "ceeccb8567ef6064afc8",
+  "position": {
+    "x": 632,
+    "y": 140,
+    "z": 91000,
+    "height": 562,
+    "width": 632,
+    "tabOrder": 91000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ar_invoices"
+                    }
+                  },
+                  "Property": "invoice_id"
+                }
+              },
+              "queryRef": "ar_invoices.invoice_id",
+              "nativeQueryRef": "invoice_id"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ar_invoices"
+                    }
+                  },
+                  "Property": "customer_id"
+                }
+              },
+              "queryRef": "ar_invoices.customer_id",
+              "nativeQueryRef": "customer_id"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ar_invoices"
+                    }
+                  },
+                  "Property": "terms"
+                }
+              },
+              "queryRef": "ar_invoices.terms",
+              "nativeQueryRef": "terms"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ar_invoices"
+                    }
+                  },
+                  "Property": "due_date"
+                }
+              },
+              "queryRef": "ar_invoices.due_date",
+              "nativeQueryRef": "due_date"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ar_invoices"
+                    }
+                  },
+                  "Property": "amount"
+                }
+              },
+              "queryRef": "ar_invoices.amount",
+              "nativeQueryRef": "amount"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ar_invoices"
+                    }
+                  },
+                  "Property": "aging_bucket"
+                }
+              },
+              "queryRef": "ar_invoices.aging_bucket",
+              "nativeQueryRef": "aging_bucket"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "ar_invoices"
+                  }
+                },
+                "Property": "due_date"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "values": [
+        {
+          "properties": {
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "ar_invoices"
+                        }
+                      },
+                      "Property": "Overdue Alert Color"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "metadata": "ar_invoices.amount"
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Collections: oldest due first  (red = 60+ overdue)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

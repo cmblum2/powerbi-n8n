@@ -1,0 +1,75 @@
+relationship 8a2d00f2-21c8-4c35-a29e-1c8e8e66b578
+	joinOnDateBehavior: datePartOnly
+	fromColumn: creators.joined_date
+	toColumn: LocalDateTable_8a27ba49-9d6b-4d7d-a997-289a8fe17abc.Date
+
+relationship a2c645c9-f551-4d58-ad77-87328e8d600c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: payments.payout_date
+	toColumn: LocalDateTable_f712960c-a29b-459d-b40a-5d24e6065d59.Date
+
+relationship ba8e65e9-4f1d-4dbb-8124-ca94843e5f9a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: ar_invoices.due_date
+	toColumn: LocalDateTable_c3d1c8f1-2107-40f3-97a2-efa4b010d011.Date
+
+relationship 8f071f5d-b0fc-4d91-970f-5e547a0fb181
+	joinOnDateBehavior: datePartOnly
+	fromColumn: ar_invoices.paid_date
+	toColumn: LocalDateTable_eb23658c-2bae-4099-ac3d-c0a1c3e85f32.Date
+
+relationship AutoDetected_76c6c29b-ab28-490b-8f53-c483a65303bc
+	fromColumn: raw_order_lines.order_id
+	toColumn: raw_orders.order_id
+
+relationship AutoDetected_d1305b78-0e85-4cc4-920a-bd2295960382
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: creator_attributions.order_id
+	toColumn: raw_orders.order_id
+
+relationship AutoDetected_fae783db-3ec9-4b9b-b54e-4f13becc67f0
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: payments.order_id
+	toColumn: raw_orders.order_id
+
+relationship AutoDetected_86e7c6e8-9f95-4bb5-adb7-edec03d19008
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: ar_invoices.order_id
+	toColumn: raw_orders.order_id
+
+relationship AutoDetected_d6bcbe2b-830f-4bd4-9986-5786cbd39bfd
+	fromColumn: raw_order_lines.product_id
+	toColumn: raw_products.product_id
+
+relationship AutoDetected_0972c430-f897-46d9-9fc7-cfbcd9691248
+	fromColumn: inventory_levels.product_id
+	toColumn: raw_products.product_id
+
+relationship AutoDetected_18617e23-4b4f-4974-b9be-4a35dcf4be1a
+	fromColumn: creator_attributions.creator_id
+	toColumn: creators.creator_id
+
+relationship 3af34825-03d7-feef-f249-c019d9175681
+	fromColumn: raw_orders.order_date
+	toColumn: DateDim.Date
+
+relationship 02bebe03-5530-4388-0cbb-998b78df40e6
+	fromColumn: ad_spend.spend_date
+	toColumn: DateDim.Date
+
+relationship 0f24f4ff-54cd-a6a1-80de-1cfd604cb7d5
+	fromColumn: daily_traffic.date
+	toColumn: DateDim.Date
+
+relationship 06145d4e-65d9-67fb-9b9c-507e8f9f4b2d
+	isActive: false
+	fromColumn: ar_invoices.invoice_date
+	toColumn: DateDim.Date
+
+relationship 292953bf-f9bd-2864-9079-bdd46797efdb
+	fromColumn: search_terms.month
+	toColumn: DateDim.Date
+

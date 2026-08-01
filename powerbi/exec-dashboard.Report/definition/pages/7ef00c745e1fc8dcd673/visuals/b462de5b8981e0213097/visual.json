@@ -1,0 +1,204 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "name": "b462de5b8981e0213097",
+  "position": {
+    "x": 632,
+    "y": 140,
+    "z": 91000,
+    "height": 562,
+    "width": 632,
+    "tabOrder": 91000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "creators"
+                    }
+                  },
+                  "Property": "handle"
+                }
+              },
+              "queryRef": "creators.handle",
+              "nativeQueryRef": "handle"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "creators"
+                    }
+                  },
+                  "Property": "follower_count"
+                }
+              },
+              "queryRef": "creators.follower_count",
+              "nativeQueryRef": "follower_count"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "creator_attributions"
+                    }
+                  },
+                  "Property": "Creator GMV"
+                }
+              },
+              "queryRef": "creator_attributions.Creator GMV",
+              "nativeQueryRef": "Creator GMV"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "creator_attributions"
+                    }
+                  },
+                  "Property": "Refund Rate"
+                }
+              },
+              "queryRef": "creator_attributions.Refund Rate",
+              "nativeQueryRef": "Refund Rate"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "creator_attributions"
+                    }
+                  },
+                  "Property": "GMV per Follower"
+                }
+              },
+              "queryRef": "creator_attributions.GMV per Follower",
+              "nativeQueryRef": "GMV per Follower"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "creator_attributions"
+                    }
+                  },
+                  "Property": "Days Since Last Order"
+                }
+              },
+              "queryRef": "creator_attributions.Days Since Last Order",
+              "nativeQueryRef": "Days Since Last Order"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "creator_attributions"
+                  }
+                },
+                "Property": "Creator GMV"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "values": [
+        {
+          "properties": {
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "creator_attributions"
+                        }
+                      },
+                      "Property": "Refund Alert Color"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "metadata": "creator_attributions.Refund Rate"
+          }
+        },
+        {
+          "properties": {
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "creator_attributions"
+                        }
+                      },
+                      "Property": "Decay Alert Color"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "metadata": "creator_attributions.Days Since Last Order"
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Creator scorecard  (red = refunds > 15%, amber = lapsed 30d+)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

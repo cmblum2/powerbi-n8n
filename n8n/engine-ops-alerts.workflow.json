@@ -1,0 +1,362 @@
+{
+  "id": "ckWjs4sXe7YCHw72",
+  "name": "Sampling-engine ops alerts",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "schedule-1",
+      "name": "Every morning 8am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://creator-insight-assistant.onrender.com/recommend?n=10",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "http-recs",
+      "name": "Fetch sampling queue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "jsCode": "// Diff today's top-10 sampling queue against every creator seen in it before.\nconst cands = ($json.candidates || []).map(c => ({\n  id: c.creator_id, handle: c.handle, rank: c.rank,\n  product: c.suggested_product, reason: c.reasons\n}));\nconst store = $getWorkflowStaticData('global');\nconst seen = new Set(store.queueSeen || []);\nconst fresh = cands.filter(c => !seen.has(c.id));\nstore.queueSeen = [...new Set([...(store.queueSeen || []), ...cands.map(c => c.id)])];\nreturn fresh.map(c => ({ json: c }));"
+      },
+      "id": "code-diff",
+      "name": "Diff vs queue history",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.handle }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-new",
+      "name": "Anyone new?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        740,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DISCORD_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ content: '🎯 New in the top-10 sampling queue: ' + $json.handle + ' (rank ' + $json.rank + ') — ' + $json.product + '. ' + ($json.reason || '') }) }}",
+        "options": {}
+      },
+      "id": "post-new",
+      "name": "Alert: new queue entrant",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        980,
+        -20
+      ],
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "url": "https://creator-insight-assistant.onrender.com/drift",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "http-drift",
+      "name": "Fetch drift monitor",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        180
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "jsCode": "// One-line daily health digest from the engine's drift monitor.\nconst d = $json;\nconst flags = (d.flags || []).length;\nconst line = '📊 Sampling-engine health — ranking skill ' + d.skill.current +\n  ' (baseline ' + d.skill.baseline + ') · hit rate ' + (d.hit_rate.current * 100).toFixed(1) +\n  '% · max PSI ' + d.max_psi.value + ' (' + d.max_psi.feature + ') · ' +\n  (flags ? '⚠️ ' + flags + ' drift flag(s)!' : '✅ no drift flags');\nreturn [{ json: { content: line } }];"
+      },
+      "id": "code-digest",
+      "name": "Build health digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DISCORD_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ content: $json.content }) }}",
+        "options": {}
+      },
+      "id": "post-digest",
+      "name": "Post daily health digest",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        740,
+        180
+      ],
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "url": "https://creator-insight-assistant.onrender.com/decisions",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "http-decisions",
+      "name": "Fetch decision queue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        400
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "jsCode": "// Alert when a campaign's scale/cut verdict flips vs the last recorded run.\n// First run records a baseline (one summary message); later runs alert only on flips.\nconst items = ($json.queue || []).filter(a => a.type === 'campaign');\nconst store = $getWorkflowStaticData('global');\nconst prev = store.campaignVerdicts || null;\nconst now = {};\nfor (const c of items) now[c.campaign_id] = { verdict: c.action, name: c.target };\nconst out = [];\nif (!prev) {\n  const counts = {};\n  for (const c of items) counts[c.action] = (counts[c.action] || 0) + 1;\n  const summary = Object.entries(counts).map(([v, n]) => n + ' ' + v).join(' · ');\n  out.push({ json: { content: '⚡ Campaign verdict baseline recorded — ' + items.length + ' campaigns: ' + summary + '. Verdict flips will alert from the next run.' } });\n} else {\n  for (const c of items) {\n    const was = prev[c.campaign_id];\n    if (was && was.verdict !== c.action) {\n      const why = (c.why || []).find(w => w.startsWith('→')) || '';\n      out.push({ json: { content: '⚡ Campaign flip: ' + c.target + ' — ' + was.verdict + ' → ' + c.action + '. ' + why } });\n    }\n  }\n}\nstore.campaignVerdicts = now;\nreturn out;"
+      },
+      "id": "code-flips",
+      "name": "Diff campaign verdicts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DISCORD_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ content: $json.content }) }}",
+        "options": {}
+      },
+      "id": "post-flips",
+      "name": "Alert: campaign flip",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        740,
+        340
+      ],
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "jsCode": "// Alert once per video when its spark window opens (verdict SPARK NOW —\n// either in the 8-14 day sweet spot or aging out with momentum).\nconst sparks = ($json.queue || []).filter(a => a.type === 'spark' && a.action === 'SPARK NOW');\nconst store = $getWorkflowStaticData('global');\nconst seen = new Set(store.sparkAlerted || []);\nconst fresh = sparks.filter(s => !seen.has(s.video_id));\nstore.sparkAlerted = [...seen, ...fresh.map(s => s.video_id)];\nreturn fresh.map(s => ({ json: { content: '🔥 Spark window: ' + s.target + ' — \"' + s.title + '\" (' + s.video_id + '). ' + ((s.why || []).find(w => w.startsWith('→')) || '') } }));"
+      },
+      "id": "code-spark",
+      "name": "Watch spark windows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.DISCORD_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ content: $json.content }) }}",
+        "options": {}
+      },
+      "id": "post-spark",
+      "name": "Alert: spark window",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        740,
+        500
+      ],
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    }
+  ],
+  "connections": {
+    "Every morning 8am": {
+      "main": [
+        [
+          {
+            "node": "Fetch sampling queue",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch drift monitor",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch decision queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch sampling queue": {
+      "main": [
+        [
+          {
+            "node": "Diff vs queue history",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Diff vs queue history": {
+      "main": [
+        [
+          {
+            "node": "Anyone new?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anyone new?": {
+      "main": [
+        [
+          {
+            "node": "Alert: new queue entrant",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Fetch drift monitor": {
+      "main": [
+        [
+          {
+            "node": "Build health digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch decision queue": {
+      "main": [
+        [
+          {
+            "node": "Diff campaign verdicts",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Watch spark windows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Diff campaign verdicts": {
+      "main": [
+        [
+          {
+            "node": "Alert: campaign flip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Watch spark windows": {
+      "main": [
+        [
+          {
+            "node": "Alert: spark window",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "opsAlertsErr00001"
+  },
+  "pinData": {}
+}

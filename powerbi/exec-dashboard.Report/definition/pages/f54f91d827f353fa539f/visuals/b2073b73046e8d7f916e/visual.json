@@ -1,0 +1,90 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "name": "b2073b73046e8d7f916e",
+  "position": {
+    "x": 16,
+    "y": 140,
+    "z": 90000,
+    "height": 562,
+    "width": 600,
+    "tabOrder": 90000
+  },
+  "visual": {
+    "visualType": "columnChart",
+    "query": {
+      "queryState": {
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ar_invoices"
+                    }
+                  },
+                  "Property": "Open A/R"
+                }
+              },
+              "queryRef": "ar_invoices.Open A/R",
+              "nativeQueryRef": "Open A/R"
+            }
+          ]
+        },
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ar_invoices"
+                    }
+                  },
+                  "Property": "aging_bucket"
+                }
+              },
+              "queryRef": "ar_invoices.aging_bucket",
+              "nativeQueryRef": "aging_bucket",
+              "active": true
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "ar_invoices"
+                  }
+                },
+                "Property": "Open A/R"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Open A/R by aging bucket'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,98 @@
+table raw_orders
+	lineageTag: 5bb355ed-0b05-4544-8410-fbc580c1b3f2
+
+	measure Customers = DISTINCTCOUNT(raw_orders[customer_id])
+		formatString: #,0
+		lineageTag: 705e676f-a2cc-432c-921c-0745c6abc501
+
+	measure 'Avg LTV' = DIVIDE([Total Revenue], [Customers])
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 12b22e53-5809-44fd-86a4-a0da5f4da519
+
+	measure 'Repeat Rate' = VAR repeaters = COUNTROWS(FILTER(VALUES(raw_orders[customer_id]), CALCULATE(DISTINCTCOUNT(raw_orders[order_id])) >= 2)) RETURN DIVIDE(repeaters, [Customers])
+		formatString: 0.0%
+		lineageTag: e4563af0-d76b-4b5d-bdbb-3b8ef89f1f19
+
+	measure 'New Customer Revenue' = CALCULATE([Total Revenue], raw_orders[is_first_order] = TRUE())
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 88374212-cc6a-4db2-a596-f3830388036e
+
+	measure 'Returning Revenue' = [Total Revenue] - [New Customer Revenue]
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 6d18b824-a680-41f1-8281-80940ae3b223
+
+	measure 'Last Order Date' = MAX(raw_orders[order_date])
+		lineageTag: c2bd093c-8845-4468-ae51-453395964f43
+
+	column order_id
+		dataType: string
+		lineageTag: 7de9f8aa-eb4c-4578-ac6e-5836e6e77557
+		summarizeBy: none
+		sourceColumn: order_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 8c025828-c399-45aa-92a8-9c918dafcbdc
+		summarizeBy: none
+		sourceColumn: order_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column channel
+		dataType: string
+		lineageTag: 40664b0a-5a1f-44fb-abcd-16b814603392
+		summarizeBy: none
+		sourceColumn: channel
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_id
+		dataType: string
+		lineageTag: ee66236a-c17e-4268-aa14-2cd22f0de751
+		summarizeBy: none
+		sourceColumn: customer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_first_order = raw_orders[order_date] = CALCULATE(MIN(raw_orders[order_date]), ALLEXCEPT(raw_orders, raw_orders[customer_id]))
+		dataType: boolean
+		lineageTag: 67416e13-aa4e-454e-b81c-b32536e47055
+		summarizeBy: none
+
+	partition raw_orders = m
+		mode: import
+		source =
+				let
+				  dataDir = "C:\Users\camry\OneDrive\Desktop\powerbi-n8n\powerbi\data\",
+				  load = (file as text, types as list) =>
+				    Table.TransformColumnTypes(
+				      Table.PromoteHeaders(
+				        Csv.Document(File.Contents(dataDir & file), [Delimiter = ",", Encoding = 65001]),
+				        [PromoteAllScalars = true]),
+				      types),
+				  out = [
+				    raw_orders = load("raw_orders.csv", {{"order_id", type text}, {"order_date", type date}, {"channel", type text}, {"customer_id", type text}}),
+				    raw_order_lines = load("raw_order_lines.csv", {{"order_id", type text}, {"product_id", type text}, {"qty", Int64.Type}, {"line_total", type number}}),
+				    raw_products = load("raw_products.csv", {{"product_id", type text}, {"product_name", type text}, {"brand", type text}, {"unit_cost", type number}, {"unit_price", type number}}),
+				    ad_spend = load("ad_spend.csv", {{"spend_date", type date}, {"channel", type text}, {"campaign", type text}, {"spend", type number}, {"attributed_revenue", type number}}),
+				    inventory_levels = load("inventory_levels.csv", {{"product_id", type text}, {"location", type text}, {"available", Int64.Type}, {"committed", Int64.Type}, {"incoming", Int64.Type}, {"reorder_point", Int64.Type}}),
+				    creators = load("creators.csv", {{"creator_id", type text}, {"handle", type text}, {"name", type text}, {"follower_count", Int64.Type}, {"joined_date", type date}}),
+				    creator_attributions = load("creator_attributions.csv", {{"order_id", type text}, {"creator_id", type text}, {"attributed_gmv", type number}, {"commission_rate", type number}, {"commission_usd", type number}, {"refunded", type logical}}),
+				    search_terms = load("search_terms.csv", {{"month", type date}, {"channel", type text}, {"campaign", type text}, {"search_term", type text}, {"impressions", Int64.Type}, {"clicks", Int64.Type}, {"spend", type number}, {"attributed_revenue", type number}, {"orders", Int64.Type}}),
+				    daily_traffic = load("daily_traffic.csv", {{"date", type date}, {"channel", type text}, {"sessions", Int64.Type}, {"product_views", Int64.Type}, {"add_to_carts", Int64.Type}, {"checkouts", Int64.Type}, {"orders", Int64.Type}}),
+				    payments = load("payments.csv", {{"order_id", type text}, {"gateway", type text}, {"gross", type number}, {"processing_fee", type number}, {"platform_fee", type number}, {"net_payout", type number}, {"payout_date", type date}}),
+				    ar_invoices = load("ar_invoices.csv", {{"invoice_id", type text}, {"order_id", type text}, {"customer_id", type text}, {"invoice_date", type date}, {"terms", type text}, {"due_date", type date}, {"amount", type number}, {"paid_date", type date}})
+				  ],
+				    raw_orders1 = out[raw_orders]
+				in
+				  raw_orders1
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

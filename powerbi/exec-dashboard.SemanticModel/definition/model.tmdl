@@ -1,0 +1,35 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["Query1","raw_order_lines","raw_orders","raw_products","ad_spend","inventory_levels","creators","creator_attributions","search_terms","daily_traffic","payments","ar_invoices"]
+
+annotation PBI_ProTooling = ["TMDLView_Desktop","DevMode"]
+
+ref table raw_order_lines
+ref table raw_orders
+ref table DateTableTemplate_0c4bc922-4008-4f46-9d5e-da955440fd29
+ref table raw_products
+ref table ad_spend
+ref table inventory_levels
+ref table creators
+ref table LocalDateTable_8a27ba49-9d6b-4d7d-a997-289a8fe17abc
+ref table creator_attributions
+ref table search_terms
+ref table daily_traffic
+ref table payments
+ref table LocalDateTable_f712960c-a29b-459d-b40a-5d24e6065d59
+ref table ar_invoices
+ref table LocalDateTable_c3d1c8f1-2107-40f3-97a2-efa4b010d011
+ref table LocalDateTable_eb23658c-2bae-4099-ac3d-c0a1c3e85f32
+ref table DateDim
+
+ref cultureInfo en-US
+

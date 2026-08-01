@@ -1,0 +1,56 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "name": "7b22660a17ba1df7a600",
+  "position": {
+    "x": 964,
+    "y": 10,
+    "z": 3000,
+    "height": 120,
+    "width": 302,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ar_invoices"
+                    }
+                  },
+                  "Property": "Open A/R"
+                }
+              },
+              "queryRef": "ar_invoices.Open A/R",
+              "nativeQueryRef": "Open A/R"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "ar_invoices"
+                  }
+                },
+                "Property": "Open A/R"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

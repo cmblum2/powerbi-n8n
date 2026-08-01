@@ -1,0 +1,90 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "name": "973ca865b77fa8e01faa",
+  "position": {
+    "x": 16,
+    "y": 140,
+    "z": 90000,
+    "height": 562,
+    "width": 600,
+    "tabOrder": 90000
+  },
+  "visual": {
+    "visualType": "columnChart",
+    "query": {
+      "queryState": {
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "creator_attributions"
+                    }
+                  },
+                  "Property": "Creator GMV"
+                }
+              },
+              "queryRef": "creator_attributions.Creator GMV",
+              "nativeQueryRef": "Creator GMV"
+            }
+          ]
+        },
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "creators"
+                    }
+                  },
+                  "Property": "handle"
+                }
+              },
+              "queryRef": "creators.handle",
+              "nativeQueryRef": "handle",
+              "active": true
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "creator_attributions"
+                  }
+                },
+                "Property": "Creator GMV"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top creators by GMV'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

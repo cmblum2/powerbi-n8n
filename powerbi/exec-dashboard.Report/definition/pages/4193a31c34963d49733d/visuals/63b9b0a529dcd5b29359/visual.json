@@ -1,0 +1,188 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "name": "63b9b0a529dcd5b29359",
+  "position": {
+    "x": 632,
+    "y": 140,
+    "z": 91000,
+    "height": 562,
+    "width": 632,
+    "tabOrder": 91000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "raw_products"
+                    }
+                  },
+                  "Property": "product_name"
+                }
+              },
+              "queryRef": "raw_products.product_name",
+              "nativeQueryRef": "product_name"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "inventory_levels"
+                    }
+                  },
+                  "Property": "location"
+                }
+              },
+              "queryRef": "inventory_levels.location",
+              "nativeQueryRef": "location"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "inventory_levels"
+                    }
+                  },
+                  "Property": "available"
+                }
+              },
+              "queryRef": "inventory_levels.available",
+              "nativeQueryRef": "available"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "inventory_levels"
+                    }
+                  },
+                  "Property": "committed"
+                }
+              },
+              "queryRef": "inventory_levels.committed",
+              "nativeQueryRef": "committed"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "inventory_levels"
+                    }
+                  },
+                  "Property": "incoming"
+                }
+              },
+              "queryRef": "inventory_levels.incoming",
+              "nativeQueryRef": "incoming"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "inventory_levels"
+                    }
+                  },
+                  "Property": "reorder_point"
+                }
+              },
+              "queryRef": "inventory_levels.reorder_point",
+              "nativeQueryRef": "reorder_point"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "inventory_levels"
+                    }
+                  },
+                  "Property": "Days of Cover"
+                }
+              },
+              "queryRef": "inventory_levels.Days of Cover",
+              "nativeQueryRef": "Days of Cover"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "inventory_levels"
+                  }
+                },
+                "Property": "Days of Cover"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "values": [
+        {
+          "properties": {
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "inventory_levels"
+                        }
+                      },
+                      "Property": "Cover Alert Color"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "metadata": "inventory_levels.Days of Cover"
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Reorder list: lowest days of cover first  (red = under 2 weeks)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

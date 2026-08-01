@@ -1,0 +1,106 @@
+{
+  "name": "Competitor new-product alert",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "schedule-1",
+      "name": "Every morning 8am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.STORE_URL || 'https://REPLACE-ME.myshopify.com/products.json?limit=250' }}",
+        "options": {}
+      },
+      "id": "http-1",
+      "name": "Fetch public product feed",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Diff this run's products against everything seen before (persisted in workflow static data).\nconst items = $json.products.map(p => ({ id: p.id, title: p.title }));\nconst store = $getWorkflowStaticData('global');\nconst seen = new Set(store.seen || []);\nconst fresh = items.filter(p => !seen.has(p.id));\nstore.seen = [...new Set([...(store.seen || []), ...items.map(p => p.id)])];\nreturn fresh.map(p => ({ json: p }));"
+      },
+      "id": "code-1",
+      "name": "Diff vs previous runs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-1",
+      "name": "Any new products?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ALERT_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ content: '🆕 New competitor product: ' + $json.title + ' (id ' + $json.id + ')' }) }}",
+        "options": {}
+      },
+      "id": "webhook-1",
+      "name": "Post alert (Discord/Slack webhook)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, -80]
+    }
+  ],
+  "connections": {
+    "Every morning 8am": {
+      "main": [[{ "node": "Fetch public product feed", "type": "main", "index": 0 }]]
+    },
+    "Fetch public product feed": {
+      "main": [[{ "node": "Diff vs previous runs", "type": "main", "index": 0 }]]
+    },
+    "Diff vs previous runs": {
+      "main": [[{ "node": "Any new products?", "type": "main", "index": 0 }]]
+    },
+    "Any new products?": {
+      "main": [
+        [{ "node": "Post alert (Discord/Slack webhook)", "type": "main", "index": 0 }],
+        []
+      ]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}

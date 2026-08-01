@@ -1,0 +1,202 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "name": "99c6e19418fc863a9573",
+  "position": {
+    "x": 632,
+    "y": 140,
+    "z": 91000,
+    "height": 562,
+    "width": 632,
+    "tabOrder": 91000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "search_terms"
+                    }
+                  },
+                  "Property": "search_term"
+                }
+              },
+              "queryRef": "search_terms.search_term",
+              "nativeQueryRef": "search_term"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "search_terms"
+                    }
+                  },
+                  "Property": "campaign"
+                }
+              },
+              "queryRef": "search_terms.campaign",
+              "nativeQueryRef": "campaign"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "search_terms"
+                    }
+                  },
+                  "Property": "impressions"
+                }
+              },
+              "queryRef": "search_terms.impressions",
+              "nativeQueryRef": "impressions"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "search_terms"
+                    }
+                  },
+                  "Property": "clicks"
+                }
+              },
+              "queryRef": "search_terms.clicks",
+              "nativeQueryRef": "clicks"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "search_terms"
+                    }
+                  },
+                  "Property": "CPC"
+                }
+              },
+              "queryRef": "search_terms.CPC",
+              "nativeQueryRef": "CPC"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "search_terms"
+                    }
+                  },
+                  "Property": "spend"
+                }
+              },
+              "queryRef": "search_terms.spend",
+              "nativeQueryRef": "spend"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "search_terms"
+                    }
+                  },
+                  "Property": "orders"
+                }
+              },
+              "queryRef": "search_terms.orders",
+              "nativeQueryRef": "orders"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "search_terms"
+                    }
+                  },
+                  "Property": "Search ROAS"
+                }
+              },
+              "queryRef": "search_terms.Search ROAS",
+              "nativeQueryRef": "Search ROAS"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "search_terms"
+                  }
+                },
+                "Property": "spend"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "objects": {
+      "values": [
+        {
+          "properties": {
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "search_terms"
+                        }
+                      },
+                      "Property": "Waste Alert Color"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ],
+            "metadata": "search_terms.spend"
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Search terms  (red = spend with zero orders)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

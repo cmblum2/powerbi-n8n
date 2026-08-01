@@ -1,0 +1,8 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "6f1671f35945a80d08c8",
+  "displayName": "Media Spend",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280
+}

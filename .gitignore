@@ -1,0 +1,8 @@
+# private session context — never publish
+CLAUDE.md
+.claude/
+
+# local junk
+node_modules/
+*.pbix.lock
+~$*
